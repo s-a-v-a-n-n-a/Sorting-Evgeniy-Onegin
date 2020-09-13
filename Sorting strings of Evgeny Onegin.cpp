@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include <locale.h>
+#include <locale.h>
 #include <assert.h>
 #include <ctype.h>
 
@@ -9,7 +9,7 @@ typedef long int LONG;
 #define MAXSYMB 100
 #define MAXLINES 1000
 
-//-------------------------------------------------------------
+//--------------------------------------------------------------------
 // Compares one string to another
 //
 // Parameters:
@@ -22,28 +22,44 @@ typedef long int LONG;
 //  1               if string 1 > string 2
 //  0               if string 1 = string 2
 // -1               if string 1 < string 2
-//-------------------------------------------------------------
+//--------------------------------------------------------------------
 int  compStr(char *line1[], char *line2[]);
 
-void putTheHoleLine(char *line, LONG SiZe);
-
-void putLine(char *ptr[], char *line, LONG nlines);
-
-//-------------------------------------------------------------
-// Scans the string from the file
+//--------------------------------------------------------------------
+// Prints unchanged massive of strings in the file
 //
 // Parameters:
 //
-// *line[]        address of the massive of pointers on strings
-// *file          pointer on the input file
+// *line            massive of strings
+// SiZe             length of the massive of strings
+//--------------------------------------------------------------------
+void putTheHoleLine(char *line, LONG SiZe);
+
+//--------------------------------------------------------------------
+// Prints sorted strings in the file
+//
+// Parameters:
+//
+// *ptr[]         address of the massive of sorted pointers on strings
+// nlines         number of lines
+//--------------------------------------------------------------------
+void putLine(char *ptr[], const LONG nlines);
+
+//--------------------------------------------------------------------
+// Sets pointers on the begiinig of the each string
+//
+// Parameters:
+//
+// *buf           buffer of the input
+// *ptr_mas[]     address of the massive of pointers on strings
 //
 // Returns:
 //
 // nlines         the number of scanned strings
-//-------------------------------------------------------------
+//--------------------------------------------------------------------
 LONG getLines(char *buf, char *ptr_mas[]);
 
-//-------------------------------------------------------------
+//--------------------------------------------------------------------
 // Sorts the strings
 //
 // Parameters:
@@ -51,10 +67,10 @@ LONG getLines(char *buf, char *ptr_mas[]);
 // *line[]        address of the massive of pointers on strings
 // low            the first index of the sorting part
 // up             the last index of the sorting part
-//-------------------------------------------------------------
+//--------------------------------------------------------------------
 void sortLines(char *line[], LONG low, LONG up);
 
-//-------------------------------------------------------------
+//--------------------------------------------------------------------
 // Swaps two strings
 //
 // Parameters:
@@ -62,7 +78,7 @@ void sortLines(char *line[], LONG low, LONG up);
 // *Str[]        address of the massive of pointers on strings
 // i             the index of the first string
 // j             the index of the second string
-//-------------------------------------------------------------
+//--------------------------------------------------------------------
 void swapLines(char *Str[], LONG i, LONG j);
 
 void unit_tests_for_compstr();
@@ -71,7 +87,7 @@ void unit_tests_for_sortlines();
 
 int main(int argc, const char *argv[])
 {
-    //setlocale(LC_ALL, "Rus");
+    setlocale(LC_ALL, "Russian");
     FILE *poem;
 
     if (argc > 0)
@@ -81,21 +97,16 @@ int main(int argc, const char *argv[])
             return 0;
     }
 
-    LONG Len = 0;                  //смотрю размер массива и создаю буфер
+    LONG Len = 0;
     if (!fseek(poem, 0, SEEK_END))
          Len = ftell(poem);
     Len++;
     fseek(poem, 0, SEEK_SET);
 
-    //printf("%d\n", Len);
-
-    char *ptr_buf[MAXLINES] = {};//массив указателей на char
+    char *ptr_buf[MAXLINES] = {};
     char *buffer = (char *) calloc(Len, sizeof(char));
 
     LONG obj = fread(buffer, sizeof(char), Len, poem);
-
-    //printf("%d\n", obj);
-    //printf("There's no EOF\n%d\nThere's an error\n%d\n", feof(poem), ferror(poem));
 
     assert(obj == Len - 1);
 
@@ -110,15 +121,13 @@ int main(int argc, const char *argv[])
     unit_tests_for_compstr();
     unit_tests_for_sortlines();
 
-    //putLine(buffer, Len);
-
-    sortLines(ptr_buf, 0, nlines - 2);
+    sortLines(ptr_buf, 0, nlines);
 
     putTheHoleLine(buffer, Len);
 
     printf("Write smth\n");
 
-    putLine(ptr_buf, buffer, nlines - 2);
+    putLine(ptr_buf, nlines);
 
     fclose(poem);
 
@@ -139,8 +148,7 @@ int compStr(char *line1, char *line2)
         while (!isalnum(*line2) && *line2 != '\n')
             line2++;
     }
-    //вроде как если одна строчка уже закончилась, то '\n'<всех остальных возможных символов,
-    //так что не нужно проверять отдельно
+
     if      (isalnum(*line1) && isalnum(*line2) && *line1 > *line2)
         return  1;
     else if (isalnum(*line1) && isalnum(*line2) && *line1 < *line2)
@@ -169,14 +177,14 @@ void unit_tests_for_compstr()
     assert(compStr("My name is Anna\n", "My name is not Anna\n") < 0);
 }
 
-void sortLines(char *line[], LONG low, LONG up)//функция получает указатель на массив указателей на char
+void sortLines(char *line[], LONG low, LONG up)
 {
     if (low >= up)
         return;
 
     LONG last = low;
 
-    swapLines(line, low, (low + up)/2);//функции передаётся указатель на массив указателей char
+    swapLines(line, low, (low + up)/2);
 
     for (int i = low + 1; i <= up; i++)
     {
@@ -201,7 +209,7 @@ void putTheHoleLine(char *line, LONG SiZe)
     fclose(directory);
 }
 
-void putLine(char *(ptr[]), char *line, LONG nlines)//первый параметр - указатель на массив указателей
+void putLine(char *(ptr[]), const LONG nlines)
 {
     FILE *dictionary = fopen("Sorted.txt", "wb");
 
@@ -228,7 +236,6 @@ void unit_tests_for_sortlines()
         char strinG3[4] = "bbb";
         char *ptr[3] = {strinG1, strinG2, strinG3};
         sortLines(ptr, 0, 2);
-        //printf("%c %c %c\n", *ptr[0], *ptr[1], *ptr[2]);
         assert(ptr[0] == strinG2);
     }
 
@@ -249,7 +256,6 @@ void unit_tests_for_sortlines()
         char strinG4[12] = "oh, my gosh";
         char *ptr[4] = {strinG1, strinG2, strinG3, strinG4};
         sortLines(ptr, 0, 3);
-        //printf("%c %c %c\n", *ptr[0], *ptr[1], *ptr[2]);
         assert(ptr[0] == strinG1 && ptr[3] == strinG4);
     }
 }
@@ -278,7 +284,7 @@ LONG getLines(char *buf, char *ptr_mas[])
 
 void swapLines(char *Str[], LONG i, LONG j)
 {
-    char *temp;//указатель на char
+    char *temp;
 
     temp = Str[i];
     Str[i] = Str[j];
