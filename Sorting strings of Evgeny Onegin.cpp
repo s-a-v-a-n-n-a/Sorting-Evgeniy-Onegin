@@ -9,6 +9,8 @@ typedef long int LONG;
 #define MAXSYMB 100
 #define MAXLINES 1000
 
+int compStrInv(char *line1, char *line2);
+
 //--------------------------------------------------------------------
 // Compares one string to another
 //
@@ -23,7 +25,7 @@ typedef long int LONG;
 //  0               if string 1 = string 2
 // -1               if string 1 < string 2
 //--------------------------------------------------------------------
-int  compStr(char *line1[], char *line2[]);
+int  compStr(char *line1, char *line2);
 
 //--------------------------------------------------------------------
 // Prints unchanged massive of strings in the file
@@ -33,7 +35,7 @@ int  compStr(char *line1[], char *line2[]);
 // *line            massive of strings
 // SiZe             length of the massive of strings
 //--------------------------------------------------------------------
-void putTheHoleLine(char *line, LONG SiZe);
+void putTheWholeLine(char *line, LONG SiZe);
 
 //--------------------------------------------------------------------
 // Prints sorted strings in the file
@@ -43,7 +45,9 @@ void putTheHoleLine(char *line, LONG SiZe);
 // *ptr[]         address of the massive of sorted pointers on strings
 // nlines         number of lines
 //--------------------------------------------------------------------
-void putLine(char *ptr[], const LONG nlines);
+void putLineAlf(char *ptr[], const LONG nlines);
+
+void putLineRhm(char *ptr[], const LONG nlines);
 
 //--------------------------------------------------------------------
 // Sets pointers on the begiinig of the each string
@@ -68,7 +72,7 @@ LONG getLines(char *buf, char *ptr_mas[]);
 // low            the first index of the sorting part
 // up             the last index of the sorting part
 //--------------------------------------------------------------------
-void sortLines(char *line[], LONG low, LONG up);
+void sortLines(char *line[], LONG low, LONG up, int (*cmp)(char *line1, char *line2));
 
 //--------------------------------------------------------------------
 // Swaps two strings
@@ -87,14 +91,19 @@ void unit_tests_for_sortlines();
 
 int main(int argc, const char *argv[])
 {
-    setlocale(LC_ALL, "Russian");
+    //setlocale(LC_ALL, "Russian");
     FILE *poem;
 
-    if (argc > 0)
+    if (argc > 1)
     {
         poem = fopen(argv[1], "rb");
         if (poem == NULL)
             return 0;
+    }
+    else
+    {
+        printf("error");
+        return EXIT_FAILURE;
     }
 
     LONG Len = 0;
@@ -116,24 +125,90 @@ int main(int argc, const char *argv[])
 
     nlines = getLines(buffer, ptr_buf);
 
-    printf("%d\n", nlines);
+    printf("%ld\n", nlines);
 
     unit_tests_for_compstr();
     unit_tests_for_sortlines();
 
-    sortLines(ptr_buf, 0, nlines);
+    sortLines(ptr_buf, 0, nlines, compStr);
 
-    putTheHoleLine(buffer, Len);
+    putTheWholeLine(buffer, Len);
 
     printf("Write smth\n");
 
-    putLine(ptr_buf, nlines);
+    putLineAlf(ptr_buf, nlines);
+
+    sortLines(ptr_buf, 0, nlines, compStrInv);
+
+    putLineRhm(ptr_buf, nlines);
 
     fclose(poem);
 
     free(buffer);
 
+    int a = 0;
+    scanf("%d", &a);
+
     return 0;
+}
+
+int compStrInv(char *line1, char *line2)
+{
+    LONG len1 = 1;
+    LONG len2 = 1;
+
+    while(*line1 != '\n')
+    {
+        line1++;
+        len1++;
+    }
+
+    while(*line2 != '\n')
+    {
+        line2++;
+        len2++;
+    }
+
+    while (!isalnum(*line1) && len1 != 0)
+    {
+        line1--;
+        len1--;
+    }
+    while (!isalnum(*line2) && len2 != 0)
+    {
+        line2--;
+        len2--;
+    }
+
+    while(*line1 == *line2 && len1 != 0 && len2 != 0)
+    {
+        len1--;
+        line1--;
+        len2--;
+        line2--;
+
+        while (!isalnum(*line1) && len1 != 0)
+        {
+            line1--;
+            len1--;
+        }
+        while (!isalnum(*line2) && len2 != 0)
+        {
+            line2--;
+            len2--;
+        }
+    }
+
+    if (len1 == 0)
+        line1++;
+    if (len2 == 0)
+        line2++;
+    if (*line1 > *line2 || (*line1 == *line2 && len1 > len2))
+        return  1;
+    else if (*line1 < *line2 || (*line1 == *line2 && len1 < len2))
+        return -1;
+    else
+        return 0;
 }
 
 int compStr(char *line1, char *line2)
@@ -177,7 +252,7 @@ void unit_tests_for_compstr()
     assert(compStr("My name is Anna\n", "My name is not Anna\n") < 0);
 }
 
-void sortLines(char *line[], LONG low, LONG up)
+void sortLines(char *line[], LONG low, LONG up, int (*cmp)(char *line1, char *line2))//нужно добавить сортировку void'ом
 {
     if (low >= up)
         return;
@@ -188,7 +263,7 @@ void sortLines(char *line[], LONG low, LONG up)
 
     for (int i = low + 1; i <= up; i++)
     {
-        if (compStr(line[low], line[i]) > 0)
+        if (cmp(line[low], line[i]) > 0)
         {
             last++;
             swapLines(line, last, i);
@@ -196,11 +271,11 @@ void sortLines(char *line[], LONG low, LONG up)
     }
     swapLines(line, low, last);
 
-    sortLines(line, low, last - 1);
-    sortLines(line, last + 1, up);
+    sortLines(line, low, last - 1, cmp);
+    sortLines(line, last + 1, up, cmp);
 }
 
-void putTheHoleLine(char *line, LONG SiZe)
+void putTheWholeLine(char *line, LONG SiZe)
 {
     FILE *directory = fopen("Text.txt", "wb");
 
@@ -209,7 +284,7 @@ void putTheHoleLine(char *line, LONG SiZe)
     fclose(directory);
 }
 
-void putLine(char *(ptr[]), const LONG nlines)
+void putLineAlf(char *(ptr[]), const LONG nlines)
 {
     FILE *dictionary = fopen("Sorted.txt", "wb");
 
@@ -228,6 +303,27 @@ void putLine(char *(ptr[]), const LONG nlines)
 
     fclose(dictionary);
 }
+
+void putLineRhm(char *ptr[], const LONG nlines)
+{
+FILE *other = fopen("SortedinRhyme.txt", "wb");
+
+    LONG SiZe = 0;
+    for (LONG i = 0; i < nlines; i++)
+    {
+        char *pt = ptr[i];
+        while(*pt != '\n')
+        {
+            fputc(*pt, other);
+            printf("%c ", *pt);
+            pt++;
+        }
+        fputc(*pt++, other);
+    }
+
+    fclose(other);
+}
+
 void unit_tests_for_sortlines()
 {
     {
@@ -235,7 +331,7 @@ void unit_tests_for_sortlines()
         char strinG2[4] = "aaa";
         char strinG3[4] = "bbb";
         char *ptr[3] = {strinG1, strinG2, strinG3};
-        sortLines(ptr, 0, 2);
+        sortLines(ptr, 0, 2, compStr);
         assert(ptr[0] == strinG2);
     }
 
@@ -244,7 +340,7 @@ void unit_tests_for_sortlines()
         char strinG2[4] = "ccc";
         char strinG3[4] = "ccc";
         char *ptr[3] = {strinG1, strinG2, strinG3};
-        sortLines(ptr, 0, 2);
+        sortLines(ptr, 0, 2, compStr);
         //printf("%c %c %c\n", *ptr[0], *ptr[1], *ptr[2]);
         assert((ptr[0] == strinG3 || ptr[0] == strinG2) && ptr[2] == strinG1);
     }
@@ -255,7 +351,7 @@ void unit_tests_for_sortlines()
         char strinG3[11] = "oh, my god";
         char strinG4[12] = "oh, my gosh";
         char *ptr[4] = {strinG1, strinG2, strinG3, strinG4};
-        sortLines(ptr, 0, 3);
+        sortLines(ptr, 0, 3, compStr);
         assert(ptr[0] == strinG1 && ptr[3] == strinG4);
     }
 }
