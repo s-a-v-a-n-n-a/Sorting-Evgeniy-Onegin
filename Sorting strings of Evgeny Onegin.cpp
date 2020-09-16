@@ -12,7 +12,7 @@ typedef long int LONG;
 struct ptrs
 {
     char *ptr = NULL;
-    LONG Size = 0;
+    LONG Length = 0;
 };
 
 //-----------------------------------------------------------------------------------------------
@@ -169,26 +169,18 @@ int main(int argc, const char *argv[])
 
     assert (getLines(buffer, ptr_buf) == nlines);
 
-    printf("%ld\n", nlines);
-
     //unit_tests_for_compstr();
     //unit_tests_for_sortlines();
 
-    sortLines(ptr_buf, 0, nlines, compStr);
-
-    for (long int i = 0; i <= nlines; i++)
-        printf("%c\n", *ptr_buf[i].ptr);
-    system("pause");
+    sortLines(ptr_buf, 0, nlines - 1, compStr);
 
     putTheWholeLine(buffer, Len);
 
-    printf("Write smth\n");
+    putLineAlf(ptr_buf, nlines - 1);
 
-    putLineAlf(ptr_buf, nlines);
+    sortLines(ptr_buf, 0, nlines - 1, compStrInv);
 
-    sortLines(ptr_buf, 0, nlines, compStrInv);
-
-    putLineRhm(ptr_buf, nlines);
+    putLineRhm(ptr_buf, nlines - 1);
 
     fclose(poem);
 
@@ -199,21 +191,47 @@ int main(int argc, const char *argv[])
 
 int compStrInv(ptrs line1, ptrs line2)
 {
-    LONG len1 = line1.Size;
-    LONG len2 = line2.Size;
+    LONG len1 = line1.Length;
+    LONG len2 = line2.Length;
 
-    line1.ptr += line1.Size;
-    line2.ptr += line2.Size;
+    while(*line1.ptr != '\n')
+    {
+        line1.ptr++;
+    }
+
+    while(*line2.ptr != '\n')
+    {
+        line2.ptr++;
+    }
+
+    while (!isalpha(*line1.ptr) && len1 != 0)
+    {
+        len1--;
+        line1.ptr--;
+    }
+    while (!isalpha(*line2.ptr) && len2 != 0)
+    {
+        len2--;
+        line2.ptr--;
+    }
 
     while(*line1.ptr == *line2.ptr && len1 != 0 && len2 != 0)
     {
         len1--;
+        line1.ptr--;
         len2--;
+        line2.ptr--;
 
-        while (!isalnum(*line1.ptr) && len1 != 0)
+        while (!isalpha(*line1.ptr) && len1 != 0)
+        {
             len1--;
-        while (!isalnum(*line2.ptr) && len2 != 0)
+            line1.ptr--;
+        }
+        while (!isalpha(*line2.ptr) && len2 != 0)
+        {
             len2--;
+            line2.ptr--;
+        }
     }
 
     if (len1 == 0 || len2 == 0)
@@ -221,7 +239,7 @@ int compStrInv(ptrs line1, ptrs line2)
         line1.ptr++;
         line2.ptr++;
     }
-    if (*line1.ptr > *line2.ptr || (*line1.ptr == *line2.ptr && len1 > len2))
+    if      (*line1.ptr > *line2.ptr || (*line1.ptr == *line2.ptr && len1 > len2))
         return  1;
     else if (*line1.ptr < *line2.ptr || (*line1.ptr == *line2.ptr && len1 < len2))
         return -1;
@@ -246,7 +264,8 @@ int compStr(ptrs line1, ptrs line2)
         return  1;
     else if (isalnum(*line1.ptr) && isalnum(*line2.ptr) && *line1.ptr < *line2.ptr)
         return -1;
-    else return 0;
+    else
+        return 0;
 }
 /*
 void unit_tests_for_compstr()
@@ -309,6 +328,7 @@ void putLineAlf(ptrs *put_ptr, const LONG nlines)
     for (LONG i = 0; i <= nlines; i++)
     {
         char *pt = put_ptr[i].ptr;
+        //printf("%ld\n", put_ptr[i].Size);
         while(*pt != '\n')
         {
             fputc(*pt, dictionary);
@@ -327,6 +347,7 @@ void putLineRhm(ptrs *put_ptr, const LONG nlines)
     for (LONG i = 0; i <= nlines; i++)
     {
         char *pt = put_ptr[i].ptr;
+        //printf("%ld\n", put_ptr[i].Size);
         while(*pt != '\n')
         {
             fputc(*pt, other);
@@ -411,7 +432,7 @@ LONG getLines(char *buf, ptrs *ptr_mas)
         else
         {
             buf++;
-            (*ptr_mas).Size++;
+            (*ptr_mas).Length++;
         }
     }
 
