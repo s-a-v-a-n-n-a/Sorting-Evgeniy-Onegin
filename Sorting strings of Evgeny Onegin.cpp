@@ -1,3 +1,11 @@
+/**
+    \file
+    \brief Sortings of Shakspeare
+
+    This program reads the text and sorts it alphabetically
+    from the beginnings and the endings of its lines
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -5,128 +13,109 @@
 
 //#define TESTING
 
-typedef long int LONG;
-
 #define MAXSYMB 1000
 #define MAXLINES 10000
 
-//struct with the pointer on the beginnig of the line and its size (length)
-struct ptrs
+struct ptrs_t
 {
-    char *ptr = NULL;
-    LONG Length = 0;
+    char     *ptr ;
+    long int Length;
 };
 
-//-----------------------------------------------------------------------------------------------
-// Compares one string to another starting with the ending of the line
-//
-// Parameters:
-//
-// line1            struct with the string 1 of char
-// line2            struct with the string 2 of char
-//
-// Returns:
-//
-//  1               if string 1 > string 2
-//  0               if string 1 = string 2
-// -1               if string 1 < string 2
-//-----------------------------------------------------------------------------------------------
+typedef struct ptrs_t ptrs;
+
+/*!
+Compares one string to another starting with the ending of the line
+
+@param[in]  line1 Struct with the string 1 of char
+@param[in]  line2 Struct with the string 2 of char
+
+@return 1 if the first string is bigger than the second string,
+        0 if the first string is equal to the second string,
+       -1 if the first string is smaller than the second string
+*/
 int compStrInv(ptrs line1, ptrs line2);
 
-//-----------------------------------------------------------------------------------------------
-// Compares one string to another starting with the beginning of the line
-//
-// Parameters:
-//
-// line1            struct with the string 1 of char
-// line2            struct with the string 2 of char
-//
-// Returns:
-//
-//  1               if string 1 > string 2
-//  0               if string 1 = string 2
-// -1               if string 1 < string 2
-//-----------------------------------------------------------------------------------------------
+/*!
+Compares one string to another starting with the beginning of the line
+
+@param[in]  line1  Struct with the string 1 of char
+@param[in]  line2  Struct with the string 2 of char
+
+@return 1 if the first string is bigger than the second string,
+        0 if the first string is equal to the second string,
+       -1 if the first string is smaller than the second string
+*/
 int  compStr(ptrs line1, ptrs line2);
 
-//-----------------------------------------------------------------------------------------------
-// Prints unchanged massive of strings in the file
-//
-// Parameters:
-//
-// *line            massive of strings
-// SiZe             length of the massive of strings
-//-----------------------------------------------------------------------------------------------
-void putTheWholeLine(char* line, LONG SiZe);
+/*!
+Prints the massive of the strings in the file
 
-//--------------------------------------------------------------------
-// Prints sorted strings in the file in alphabet order
-//
-// Parameters:
-//
-// *put_ptr       address of the massive of sorted structs with pointers of strings
-// nlines         number of lines
-//-----------------------------------------------------------------------------------------------
-void putLineAlf(ptrs* put_ptr, const LONG nlines);
+@param[in]  *line   Massive of strings
+@param[in]  SiZe    The length of the massive of strings
+*/
+void putTheWholeLine(char* line, long int SiZe);
 
-//-----------------------------------------------------------------------------------------------
-// Prints sorted strings in the  in rhyme order
-//
-// Parameters:
-//
-// *put_ptr       address of the massive of sorted structs with pointers of strings
-// nlines         number of lines
-//-----------------------------------------------------------------------------------------------
-void putLineRhm(ptrs* put_ptr, const LONG nlines);
+/*!
+Prints sorted strings in the file in alphabet order
 
-//-----------------------------------------------------------------------------------------------
-// Counts the number of lines in buffer
-//
-// Parameters:
-//
-// *buf           buffer of the input
-//
-// Returns:
-//
-// nlines         the number of scanned strings
-//-----------------------------------------------------------------------------------------------
-LONG length(char* buf);
+@param[in]  *put_ptr The address of the massive of sorted structs with pointers of strings
+@param[in]  nlines   Number of lines
+*/
+void putLineAlf(ptrs* put_ptr, const long int nlines);
 
-//-----------------------------------------------------------------------------------------------
-// Sets pointers on the begiinig of the each string
-//
-// Parameters:
-//
-// *buf           buffer of the input
-// *ptr_mas       address of the massive of structs with pointers on strings
-//
-// Returns:
-//
-// nlines         the number of scanned strings
-//-----------------------------------------------------------------------------------------------
-LONG getLines(char* buf, ptrs* ptr_mas);
+/*!
+Prints sorted strings in the  in rhyme order
 
-//-----------------------------------------------------------------------------------------------
-// Sorts the strings
-//
-// Parameters:
-//
-// *line          address of the massive of structs with pointers on strings
-// low            the first index of the sorting part
-// up             the last index of the sorting part
-//-----------------------------------------------------------------------------------------------
-void sortLines(ptrs* line, LONG low, LONG up, int (* cmp)(ptrs line1, ptrs line2));
+@param[in]  *put_ptr The address of the massive of sorted structs with pointers of strings
+@param[inn  nlines   Number of lines
+*/
+void putLineRhm(ptrs* put_ptr, const long int nlines);
 
-//-----------------------------------------------------------------------------------------------
-// Swaps two strings
-//
-// Parameters:
-//
-// *Str          address of the massive of structs with pointers on strings
-// i             the index of the first string
-// j             the index of the second string
-//-----------------------------------------------------------------------------------------------
-void swapLines(ptrs* Str, LONG i, LONG j);
+/*!
+Counts the number of lines in buffer
+
+@param[in]  *buf      Buffer of the input
+
+@param[out] nlines    The number of using scanned strings
+*/
+long int length(char* buf);
+
+/*!
+Sets pointers on the begiinig of the each string
+
+@param[in]  *buf       Buffer of the input
+@param[in]  *ptr_mas   The address of the massive of structs with pointers on strings
+
+@param[out] nlines     The number of using scanned strings
+*/
+long int getLines(char* buf, ptrs* ptr_mas);
+
+/*!
+Sets pointers on the begiinig of the each string
+
+@param[in]  *ptr_mas   The address of the massive of structs with pointers on strings
+@param[in]  nlines     The number of using lines
+*/
+void countingSizes(ptrs* ptr_mas, long int nlines);
+
+/*!
+Sorts the strings by quick sort from the book of Kernighan and Ritchie
+
+@param[in]  *line      The address of the massive of structs with pointers on strings
+@param[in]  low        The first index of the sorting part
+@param[in]  up         The last index of the sorting part
+*/
+void sortLines(ptrs* line, long int low, long int up, int (* cmp)(ptrs line1, ptrs line2));
+
+/*!
+Swaps two strings
+
+@param[in]  *Str       The address of the massive of structs with pointers on strings
+@param[in]  i          The index of the first string
+@param[in]  j          The index of the second string
+*/
+void swapLines(ptrs* Str, long int i, long int j);
 
 void unit_tests_for_compStrInv();
 
@@ -136,6 +125,10 @@ void unit_tests_for_sortlines();
 
 int main(int argc, const char* argv[])
 {
+/// If define is uncommented we want to test some functions
+/*!
+    We want to test comparing functions and the function of sorting
+*/
     #ifdef TESTING
         unit_tests_for_compStrInv();
         unit_tests_for_compstr();
@@ -145,6 +138,7 @@ int main(int argc, const char* argv[])
     #else
         FILE* poem;
 
+///     Checking for file with text existing
         if (argc > 1)
         {
             poem = fopen(argv[1], "rb");
@@ -157,21 +151,25 @@ int main(int argc, const char* argv[])
             return EXIT_FAILURE;
         }
 
-        LONG Len = 0;
+///     Reading file and getting its size
+
+        long int Len = 0;
         if (!fseek(poem, 0, SEEK_END))
             Len = ftell(poem);
-        Len++;
+        Len ++;
         fseek(poem, 0, SEEK_SET);
 
         char* buffer = (char*) calloc(Len, sizeof(char));
 
-        LONG obj = fread(buffer, sizeof(char), Len, poem);
+        long int obj = fread(buffer, sizeof(char), Len, poem);
 
         assert(obj == Len - 1);
 
         buffer[Len - 1] = '\0';
 
-        LONG nlines = 0;
+///     Getting thu number of lines on the text and arranging of the massive of pointers on them
+
+        long int nlines = 0;
 
         nlines = length(buffer);
 
@@ -179,19 +177,29 @@ int main(int argc, const char* argv[])
 
         assert (getLines(buffer, ptr_buf) == nlines);
 
-        sortLines(ptr_buf, 0, nlines - 1, compStr);
+        countingSizes(ptr_buf, nlines);
 
-        putTheWholeLine(buffer, Len);
+///     Sorting the lines alphabetically from the beginnigs of the lines
+///     and printing them
+
+        sortLines(ptr_buf, 0, nlines - 1, compStr);
 
         putLineAlf(ptr_buf, nlines - 1);
 
+///     Sorting the lines alphabetically from the endings of the lines
+///     and printing them
         sortLines(ptr_buf, 0, nlines - 1, compStrInv);
 
         putLineRhm(ptr_buf, nlines - 1);
 
+///     Printing the primary text
+        putTheWholeLine(buffer, Len);
+
         fclose(poem);
 
         free(buffer);
+
+        system("pause");
 
         return 0;
 
@@ -200,19 +208,12 @@ int main(int argc, const char* argv[])
 
 int compStrInv(ptrs line1, ptrs line2)
 {
-    LONG len1 = line1.Length;
-    LONG len2 = line2.Length;
-    
-    while(*line1.ptr != '\n')
-    {
-        line1.ptr++;
-    }
+    long int len1 = line1.Length;
+    long int len2 = line2.Length;
 
-    while(*line2.ptr != '\n')
-    {
-        line2.ptr++;
-    }
-    
+    line1.ptr += line1.Length;
+    line2.ptr += line2.Length;
+
     while (!isalpha(*line1.ptr) && len1 != 0)
     {
         len1--;
@@ -277,7 +278,7 @@ int compStr(ptrs line1, ptrs line2)
         return 0;
 }
 
-void putTheWholeLine(char* line, LONG SiZe)
+void putTheWholeLine(char* line, long int SiZe)
 {
     FILE* directory = fopen("Text.txt", "wb");
 
@@ -286,11 +287,11 @@ void putTheWholeLine(char* line, LONG SiZe)
     fclose(directory);
 }
 
-void putLineAlf(ptrs* put_ptr, const LONG nlines)
+void putLineAlf(ptrs* put_ptr, const long int nlines)
 {
     FILE* dictionary = fopen("Sorted.txt", "wb");
 
-    for (LONG i = 0; i <= nlines; i++)
+    for (long int i = 0; i <= nlines; i++)
     {
         char* pt = put_ptr[i].ptr;
 
@@ -306,11 +307,11 @@ void putLineAlf(ptrs* put_ptr, const LONG nlines)
     fclose(dictionary);
 }
 
-void putLineRhm(ptrs* put_ptr, const LONG nlines)
+void putLineRhm(ptrs* put_ptr, const long int nlines)
 {
     FILE* other = fopen("SortedinRhyme.txt", "wb");
 
-    for (LONG i = 0; i <= nlines; i++)
+    for (long int i = 0; i <= nlines; i++)
     {
         char* pt = put_ptr[i].ptr;
 
@@ -325,9 +326,9 @@ void putLineRhm(ptrs* put_ptr, const LONG nlines)
     fclose(other);
 }
 
-LONG length(char* buf)
+long int length(char* buf)
 {
-    LONG nlines = 0;
+    long int nlines = 0;
     char c = EOF;
 
     while (nlines < MAXLINES && c != '\0')
@@ -347,9 +348,9 @@ LONG length(char* buf)
     return nlines;
 }
 
-LONG getLines(char* buf, ptrs* ptr_mas)
+long int getLines(char* buf, ptrs* ptr_mas)
 {
-    LONG nlines = 0;
+    long int nlines = 0;
     char c = EOF;
 
     (*ptr_mas).ptr = buf;
@@ -366,19 +367,29 @@ LONG getLines(char* buf, ptrs* ptr_mas)
         else
         {
             buf++;
-            (*ptr_mas).Length++;
         }
     }
 
     return nlines;
 }
 
-void sortLines(ptrs* line, LONG low, LONG up, int (* cmp)(ptrs line1, ptrs line2))
+void countingSizes(ptrs* ptr_mas, long int nlines)
+{
+    char *pt = NULL;
+    for (long int i = 0; i <= nlines; i++)
+    {
+        pt = (ptr_mas[i]).ptr;
+        while(*(pt++) != '\n')
+            (ptr_mas[i]).Length++;
+    }
+}
+
+void sortLines(ptrs* line, long int low, long int up, int (* cmp)(ptrs line1, ptrs line2))
 {
     if (low >= up)
         return;
 
-    LONG last = low;
+    long int last = low;
 
     swapLines(line, low, (low + up)/2);
 
@@ -396,13 +407,15 @@ void sortLines(ptrs* line, LONG low, LONG up, int (* cmp)(ptrs line1, ptrs line2
     sortLines(line, last + 1, up, cmp);
 }
 
-void swapLines(ptrs* Str, LONG i, LONG j)
+void swapLines(ptrs* Str, long int i, long int j)
 {
-    char* temp;
-
-    temp = Str[i].ptr;
+    char *temp = Str[i].ptr;
     Str[i].ptr = Str[j].ptr;
     Str[j].ptr = temp;
+
+    long int tempLen = Str[i].Length;
+    Str[i].Length = Str[j].Length;
+    Str[j].Length = tempLen;
 }
 
 void unit_tests_for_compStrInv()
