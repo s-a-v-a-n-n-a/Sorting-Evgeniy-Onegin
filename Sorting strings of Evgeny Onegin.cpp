@@ -13,9 +13,6 @@
 
 //#define TESTING
 
-#define MAXSYMB 1000
-#define MAXLINES 10000
-
 struct ptrs_t
 {
     char     *ptr ;
@@ -117,10 +114,13 @@ Swaps two strings
 */
 void swapLines(ptrs* Str, long int i, long int j);
 
+///Unit-tests for comparing from the ending
 void unit_tests_for_compStrInv();
 
+///Unit-tests for comparing from the beginnig
 void unit_tests_for_compstr();
 
+///Unit-tests for sorting
 void unit_tests_for_sortlines();
 
 int main(int argc, const char* argv[])
@@ -167,7 +167,7 @@ int main(int argc, const char* argv[])
 
         buffer[Len - 1] = '\0';
 
-///     Getting thu number of lines on the text and arranging of the massive of pointers on them
+///     Getting the number of lines on the text and arranging of the massive of pointers on them
 
         long int nlines = 0;
 
