@@ -62,7 +62,7 @@ Sets pointers on the begiinig of the each string
 @param[in]  *ptr_mas   The address of the massive of structs with pointers on strings
 @param[in]  nlines     The number of using lines
 */
-void countingSizes(ptrs* ptr_mas, long int nlines);
+void countingSizes(ptrs* ptr_mas, size_t nlines);
 
 /*!
 Compares one string to another starting with the beginning of the line
@@ -95,7 +95,7 @@ Swaps two strings
 @param[in]  i          The index of the first string
 @param[in]  j          The index of the second string
 */
-void swapLines(ptrs* Str, long int i, long int j);
+void swapLines(ptrs* Str, size_t i, size_t j);
 
 /*!
 Sorts the strings by quick sort from the book of Kernighan and Ritchie
@@ -104,7 +104,7 @@ Sorts the strings by quick sort from the book of Kernighan and Ritchie
 @param[in]  low        The first index of the sorting part
 @param[in]  up         The last index of the sorting part
 */
-void sortLines(ptrs* line, long int low, long int up, int (* cmp)(ptrs line1, ptrs line2));
+void sortLines(ptrs* line, size_t low, size_t up, int (* cmp)(ptrs line1, ptrs line2));
 
 /*!
 Prints sorted strings in the file in alphabet order
@@ -112,7 +112,7 @@ Prints sorted strings in the file in alphabet order
 @param[in]  *put_ptr The address of the massive of sorted structs with pointers of strings
 @param[in]  nlines   Number of lines
 */
-void putLineAlph(ptrs* put_ptr, const long int nlines);
+void putLineAlph(ptrs* put_ptr, const size_t nlines);
 
 /*!
 Prints sorted strings in the  in rhyme order
@@ -120,7 +120,7 @@ Prints sorted strings in the  in rhyme order
 @param[in]  *put_ptr The address of the massive of sorted structs with pointers of strings
 @param[inn  nlines   Number of lines
 */
-void putLineRyhm(ptrs* put_ptr, const long int nlines);
+void putLineRyhm(ptrs* put_ptr, const size_t nlines);
 
 /*!
 Prints the massive of the strings in the file
@@ -128,7 +128,7 @@ Prints the massive of the strings in the file
 @param[in]  *line   Massive of strings
 @param[in]  SiZe    The length of the massive of strings
 */
-void putThePrimaryLine(char* line, long int SiZe);
+void putThePrimaryLine(char* line, size_t SiZe);
 
 ///Unit-tests for comparing from the beginnig
 void unit_tests_for_compstrAlph();
@@ -254,10 +254,10 @@ long int getLines(char* buf, ptrs* ptr_mas)
     return nlines;
 }
 
-void countingSizes(ptrs* ptr_mas, long int nlines)
+void countingSizes(ptrs* ptr_mas, size_t nlines)
 {
     char *pt = NULL;
-    for (long int i = 0; i <= nlines; i++)
+    for (size_t i = 0; i <= nlines; i++)
     {
         pt = (ptr_mas[i]).ptr;
         while(*(pt++) != '\n' && ptr_mas[i].Length < MAXSYMB)
@@ -337,7 +337,7 @@ int compStrRyhm(ptrs line1, ptrs line2)
         return 0;
 }
 
-void swapLines(ptrs* Str, long int i, long int j)
+void swapLines(ptrs* Str, size_t i, size_t j)
 {
     char *temp = Str[i].ptr;
     Str[i].ptr = Str[j].ptr;
@@ -348,16 +348,16 @@ void swapLines(ptrs* Str, long int i, long int j)
     Str[j].Length = tempLen;
 }
 
-void sortLines(ptrs* line, long int low, long int up, int (* cmp)(ptrs line1, ptrs line2))
+void sortLines(ptrs* line, size_t low, size_t up, int (* cmp)(ptrs line1, ptrs line2))
 {
     if (low >= up)
         return;
 
-    long int last = low;
+    size_t last = low;
 
     swapLines(line, low, (low + up)/2);
 
-    for (int i = low + 1; i <= up; i++)
+    for (size_t i = low + 1; i <= up; i++)
     {
         if (cmp(line[low], line[i]) > 0)
         {
@@ -371,11 +371,11 @@ void sortLines(ptrs* line, long int low, long int up, int (* cmp)(ptrs line1, pt
     sortLines(line, last + 1, up, cmp);
 }
 
-void putLineAlph(ptrs* put_ptr, const long int nlines)
+void putLineAlph(ptrs* put_ptr, const size_t nlines)
 {
     FILE* dictionary = fopen("Sorted.txt", "wb");
 
-    for (long int i = 0; i <= nlines; i++)
+    for (size_t i = 0; i <= nlines; i++)
     {
         char* pt = put_ptr[i].ptr;
 
@@ -391,11 +391,11 @@ void putLineAlph(ptrs* put_ptr, const long int nlines)
     fclose(dictionary);
 }
 
-void putLineRyhm(ptrs* put_ptr, const long int nlines)
+void putLineRyhm(ptrs* put_ptr, const size_t nlines)
 {
     FILE* other = fopen("SortedinRhyme.txt", "wb");
 
-    for (long int i = 0; i <= nlines; i++)
+    for (size_t i = 0; i <= nlines; i++)
     {
         char* pt = put_ptr[i].ptr;
 
@@ -410,7 +410,7 @@ void putLineRyhm(ptrs* put_ptr, const long int nlines)
     fclose(other);
 }
 
-void putThePrimaryLine(char* line, long int SiZe)
+void putThePrimaryLine(char* line, size_t SiZe)
 {
     FILE* directory = fopen("Text.txt", "wb");
 
