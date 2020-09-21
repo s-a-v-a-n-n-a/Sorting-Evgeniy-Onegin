@@ -95,7 +95,7 @@ Swaps two strings
 @param[in]  i          The index of the first string
 @param[in]  j          The index of the second string
 */
-void swapLines(ptrs* Str, size_t i, size_t j);
+void swapLines(ptrs* Str, size_t line1, size_t line2);
 
 /*!
 Sorts the strings by quick sort from the book of Kernighan and Ritchie
@@ -128,7 +128,7 @@ Prints the massive of the strings in the file
 @param[in]  *line   Massive of strings
 @param[in]  SiZe    The length of the massive of strings
 */
-void putThePrimaryLine(char* line, size_t SiZe);
+void putThePrimaryLine(char* line, size_t sz);
 
 ///Unit-tests for comparing from the beginnig
 void unit_tests_for_compstrAlph();
@@ -337,15 +337,15 @@ int compStrRyhm(ptrs line1, ptrs line2)
         return 0;
 }
 
-void swapLines(ptrs* Str, size_t i, size_t j)
+void swapLines(ptrs* Str, size_t line1, size_t line2)
 {
-    char *temp = Str[i].ptr;
-    Str[i].ptr = Str[j].ptr;
-    Str[j].ptr = temp;
+    char *temp     = Str[line1].ptr;
+    Str[line1].ptr = Str[line2].ptr;
+    Str[line2].ptr = temp;
 
-    long int tempLen = Str[i].Length;
-    Str[i].Length = Str[j].Length;
-    Str[j].Length = tempLen;
+    long int tempLen  = Str[line1].Length;
+    Str[line1].Length = Str[line2].Length;
+    Str[line2].Length = tempLen;
 }
 
 void sortLines(ptrs* line, size_t low, size_t up, int (* cmp)(ptrs line1, ptrs line2))
@@ -410,11 +410,11 @@ void putLineRyhm(ptrs* put_ptr, const size_t nlines)
     fclose(other);
 }
 
-void putThePrimaryLine(char* line, size_t SiZe)
+void putThePrimaryLine(char* line, size_t sz)
 {
     FILE* directory = fopen("Text.txt", "wb");
 
-    fwrite(line, sizeof(char), SiZe, directory);
+    fwrite(line, sizeof(char), sz, directory);
 
     fclose(directory);
 }
