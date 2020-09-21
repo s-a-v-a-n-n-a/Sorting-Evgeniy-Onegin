@@ -13,7 +13,7 @@
 
     \authors Anna Savchuk
 
-    \date    Last update was 09.21.20 at 14:17
+    \date    Last update was 09.21.20 at 14:35
 
     \warning Put the '\\n' at the end of the last text line in the file
     \warning (Press "Enter")
@@ -29,13 +29,13 @@
 #define MAXSYMB 1000
 #define MAXLINES 10000
 
-struct ptrs_t
+struct ptrs
 {
     char     *ptr ;
     long int Length;
 };
 
-typedef struct ptrs_t ptrs;
+typedef struct ptrs ptrs_t;
 
 /*!
 Counts the number of lines in buffer
@@ -54,7 +54,7 @@ Sets pointers on the begiinig of the each string
 
 @param[out] nlines     The number of using scanned strings
 */
-long int getLines(char* buf, ptrs* ptr_mas);
+long int getLines(char* buf, ptrs_t* ptr_mas);
 
 /*!
 Sets pointers on the begiinig of the each string
@@ -62,7 +62,7 @@ Sets pointers on the begiinig of the each string
 @param[in]  *ptr_mas   The address of the massive of structs with pointers on strings
 @param[in]  nlines     The number of using lines
 */
-void countingSizes(ptrs* ptr_mas, size_t nlines);
+void countingSizes(ptrs_t* ptr_mas, size_t nlines);
 
 /*!
 Compares one string to another starting with the beginning of the line
@@ -74,7 +74,7 @@ Compares one string to another starting with the beginning of the line
         0 if the first string is equal to the second string,
        -1 if the first string is smaller than the second string
 */
-int  compStrAlph(ptrs line1, ptrs line2);
+int  compStrAlph(ptrs_t line1, ptrs_t line2);
 
 /*!
 Compares one string to another starting with the ending of the line
@@ -86,7 +86,7 @@ Compares one string to another starting with the ending of the line
         0 if the first string is equal to the second string,
        -1 if the first string is smaller than the second string
 */
-int compStrRyhm(ptrs line1, ptrs line2);
+int compStrRyhm(ptrs_t line1, ptrs_t line2);
 
 /*!
 Swaps two strings
@@ -95,7 +95,7 @@ Swaps two strings
 @param[in]  i          The index of the first string
 @param[in]  j          The index of the second string
 */
-void swapLines(ptrs* Str, size_t line1, size_t line2);
+void swapLines(ptrs_t* Str, size_t line1, size_t line2);
 
 /*!
 Sorts the strings by quick sort from the book of Kernighan and Ritchie
@@ -104,7 +104,7 @@ Sorts the strings by quick sort from the book of Kernighan and Ritchie
 @param[in]  low        The first index of the sorting part
 @param[in]  up         The last index of the sorting part
 */
-void sortLines(ptrs* line, size_t low, size_t up, int (* cmp)(ptrs line1, ptrs line2));
+void sortLines(ptrs_t* line, size_t low, size_t up, int (* cmp)(ptrs_t line1, ptrs_t line2));
 
 /*!
 Prints sorted strings in the file in alphabet order
@@ -112,7 +112,7 @@ Prints sorted strings in the file in alphabet order
 @param[in]  *put_ptr The address of the massive of sorted structs with pointers of strings
 @param[in]  nlines   Number of lines
 */
-void putLineAlph(ptrs* put_ptr, const size_t nlines);
+void putLineAlph(ptrs_t* put_ptr, const size_t nlines);
 
 /*!
 Prints sorted strings in the  in rhyme order
@@ -120,7 +120,7 @@ Prints sorted strings in the  in rhyme order
 @param[in]  *put_ptr The address of the massive of sorted structs with pointers of strings
 @param[inn  nlines   Number of lines
 */
-void putLineRyhm(ptrs* put_ptr, const size_t nlines);
+void putLineRyhm(ptrs_t* put_ptr, const size_t nlines);
 
 /*!
 Prints the massive of the strings in the file
@@ -184,7 +184,7 @@ int main(int argc, const char* argv[])
 
         nlines = getNumLines(buffer);
 
-        ptrs* ptr_buf = (ptrs*) calloc(nlines + 1, sizeof(ptrs));
+        ptrs_t* ptr_buf = (ptrs*) calloc(nlines + 1, sizeof(ptrs));
 
         assert (getLines(buffer, ptr_buf) == nlines);
 
@@ -229,9 +229,9 @@ long int getNumLines(char* buf)
     return nlines;
 }
 
-long int getLines(char* buf, ptrs* ptr_mas)
+long int getLines(char* buf, ptrs_t* ptr_mas)
 {
-    long int nlines = 0;
+    size_t nlines = 0;
     char c = EOF;
 
     (*ptr_mas).ptr = buf;
@@ -254,7 +254,7 @@ long int getLines(char* buf, ptrs* ptr_mas)
     return nlines;
 }
 
-void countingSizes(ptrs* ptr_mas, size_t nlines)
+void countingSizes(ptrs_t* ptr_mas, size_t nlines)
 {
     char *pt = NULL;
     for (size_t i = 0; i <= nlines; i++)
@@ -265,7 +265,7 @@ void countingSizes(ptrs* ptr_mas, size_t nlines)
     }
 }
 
-int compStrAlph(ptrs line1, ptrs line2)
+int compStrAlph(ptrs_t line1, ptrs_t line2)
 {
     while(*line1.ptr == *line2.ptr && *line1.ptr != '\n' && *line2.ptr != '\n')
     {
@@ -286,7 +286,7 @@ int compStrAlph(ptrs line1, ptrs line2)
         return 0;
 }
 
-int compStrRyhm(ptrs line1, ptrs line2)
+int compStrRyhm(ptrs_t line1, ptrs_t line2)
 {
     long int len1 = line1.Length;
     long int len2 = line2.Length;
@@ -337,7 +337,7 @@ int compStrRyhm(ptrs line1, ptrs line2)
         return 0;
 }
 
-void swapLines(ptrs* Str, size_t line1, size_t line2)
+void swapLines(ptrs_t* Str, size_t line1, size_t line2)
 {
     char *temp     = Str[line1].ptr;
     Str[line1].ptr = Str[line2].ptr;
@@ -348,7 +348,7 @@ void swapLines(ptrs* Str, size_t line1, size_t line2)
     Str[line2].Length = tempLen;
 }
 
-void sortLines(ptrs* line, size_t low, size_t up, int (* cmp)(ptrs line1, ptrs line2))
+void sortLines(ptrs_t* line, size_t low, size_t up, int (* cmp)(ptrs_t line1, ptrs_t line2))
 {
     if (low >= up)
         return;
@@ -371,7 +371,7 @@ void sortLines(ptrs* line, size_t low, size_t up, int (* cmp)(ptrs line1, ptrs l
     sortLines(line, last + 1, up, cmp);
 }
 
-void putLineAlph(ptrs* put_ptr, const size_t nlines)
+void putLineAlph(ptrs_t* put_ptr, const size_t nlines)
 {
     FILE* dictionary = fopen("Sorted.txt", "wb");
 
@@ -391,7 +391,7 @@ void putLineAlph(ptrs* put_ptr, const size_t nlines)
     fclose(dictionary);
 }
 
-void putLineRyhm(ptrs* put_ptr, const size_t nlines)
+void putLineRyhm(ptrs_t* put_ptr, const size_t nlines)
 {
     FILE* other = fopen("SortedinRhyme.txt", "wb");
 
