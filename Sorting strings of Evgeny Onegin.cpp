@@ -13,7 +13,7 @@
 
     \authors Anna Savchuk
 
-    \date    Last update was 09.21.20 at 13:34
+    \date    Last update was 09.21.20 at 14:17
 
     \warning Put the '\\n' at the end of the last text line in the file
     \warning (Press "Enter")
