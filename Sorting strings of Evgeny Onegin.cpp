@@ -1,12 +1,22 @@
 /**
     \file
-    \brief Sortings of Shakspeare
+    Sortings of Shakspeare
 
     This program reads the text and sorts it alphabetically
     from the beginnings and the endings of its lines
 
-    \brief Put the '\\n' at the end of the last text line in the file
-    \brief (Press "Enter")
+    Prints alphabet sorting in the file "Sorted.txt"
+    Prints rhyme sorting in the file "SortedinRhyme.txt"
+    Prints the primary text in the file "Text.txt"
+
+    Thank you for using this program!
+
+    \authors Anna Savchuk
+
+    \data    Last update was 09.21.20 at 13:34
+
+    \warning Put the '\\n' at the end of the last text line in the file
+    \warning (Press "Enter")
 */
 
 #include <stdio.h>
@@ -152,8 +162,8 @@ int main(int argc, const char* argv[])
         }
         else
         {
-            printf("error");
-            return EXIT_FAILURE;
+            printf("Please, give a file for program!\n");
+            return 0;
         }
 
         long int Len = 0;
