@@ -1,143 +1,139 @@
 /**
     \file
     Sortings of Shakspeare
-
     This program reads the text and sorts it alphabetically
     from the beginnings and the endings of its lines
-
     Prints alphabet sorting in the file "Sorted.txt"
     Prints rhyme sorting in the file "SortedinRhyme.txt"
     Prints the primary text in the file "Text.txt"
-
     Thank you for using this program!
-
     \authors Anna Savchuk
-
-    \date    Last update was 09.21.20 at 14:35
-
-    \warning Put the '\\n' at the end of the last text line in the file
-    \warning (Press "Enter")
+    \date    Last update was 09.29.20 at 00:18
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <ctype.h>
+#include <string.h>
 
 //#define TESTING
 
 #define MAXSYMB 1000
-#define MAXLINES 10000
 
-struct ptrs
+struct Ptrs
 {
     char     *ptr ;
-    long int Length;
+    long int length;
 };
 
-typedef struct ptrs ptrs_t;
+typedef struct Ptrs Ptrs_t;
+
+/*!
+Counts the number of symbols in the file
+@param[in]  *file     Input file
+
+@param[out] len       The number symbols in file
+*/
+long int get_size_of_file(FILE* file);
 
 /*!
 Counts the number of lines in buffer
+@param[in]  *file     Input file
+@param[in]  length    Pointer on the number symbols in file
 
+@param[out] buffer    A buffer with the whole text
+*/
+char *get_the_text(FILE* file, size_t* length);
+
+/*!
+Counts the number of lines in buffer
 @param[in]  *buf      Buffer of the input
+@param[in]  length    Length of buffer
 
 @param[out] nlines    The number of using scanned strings
 */
-long int getNumLines(char* buf);
+long int get_num_lines(char* buf, size_t length);
 
 /*!
 Sets pointers on the begiinig of the each string
-
 @param[in]  *buf       Buffer of the input
 @param[in]  *ptr_mas   The address of the massive of structs with pointers on strings
+@param[in]  length     Length of buffer
 
-@param[out] nlines     The number of using scanned strings
+@param[out] n_lines    The number of using scanned strings
 */
-long int getLines(char* buf, ptrs_t* ptr_mas);
+long int get_lines(char* buf, Ptrs_t* ptr_mas, size_t length);
 
 /*!
 Sets pointers on the begiinig of the each string
-
-@param[in]  *ptr_mas   The address of the massive of structs with pointers on strings
-@param[in]  nlines     The number of using lines
+@param[in]  *ptr_mas    The address of the massive of structs with pointers on strings
+@param[in]  n_lines     The number of using lines
 */
-void countingSizes(ptrs_t* ptr_mas, size_t nlines);
+void counting_sizes(Ptrs_t* ptr_mas, size_t n_lines);
 
 /*!
 Compares one string to another starting with the beginning of the line
-
-@param[in]  line1  Struct with the string 1 of char
-@param[in]  line2  Struct with the string 2 of char
+@param[in]  line1  struct with the string 1 of char
+@param[in]  line2  struct with the string 2 of char
 
 @return 1 if the first string is bigger than the second string,
         0 if the first string is equal to the second string,
        -1 if the first string is smaller than the second string
 */
-int  compStrAlph(ptrs_t line1, ptrs_t line2);
+int  comp_str_in_alph(Ptrs_t line1, Ptrs_t line2);
 
 /*!
 Compares one string to another starting with the ending of the line
-
-@param[in]  line1 Struct with the string 1 of char
-@param[in]  line2 Struct with the string 2 of char
+@param[in]  line1 struct with the string 1 of char
+@param[in]  line2 struct with the string 2 of char
 
 @return 1 if the first string is bigger than the second string,
         0 if the first string is equal to the second string,
        -1 if the first string is smaller than the second string
 */
-int compStrRyhm(ptrs_t line1, ptrs_t line2);
+int comp_str_in_ryhm(Ptrs_t line1, Ptrs_t line2);
 
 /*!
 Swaps two strings
-
-@param[in]  *Str       The address of the massive of structs with pointers on strings
+@param[in]  *str       The address of the massive of structs with pointers on strings
 @param[in]  i          The index of the first string
 @param[in]  j          The index of the second string
 */
-void swapLines(ptrs_t* Str, size_t line1, size_t line2);
+void swap_lines(Ptrs_t* str, size_t line1, size_t line2);
 
 /*!
 Sorts the strings by quick sort from the book of Kernighan and Ritchie
-
 @param[in]  *line      The address of the massive of structs with pointers on strings
 @param[in]  low        The first index of the sorting part
 @param[in]  up         The last index of the sorting part
 */
-void sortLines(ptrs_t* line, size_t low, size_t up, int (* cmp)(ptrs_t line1, ptrs_t line2));
+void sort_lines(Ptrs_t* line, size_t low, size_t up, int (* cmp)(Ptrs_t line1, Ptrs_t line2));
 
 /*!
 Prints sorted strings in the file in alphabet order
-
-@param[in]  *put_ptr The address of the massive of sorted structs with pointers of strings
-@param[in]  nlines   Number of lines
+@param[in]  *put_ptr  The address of the massive of sorted structs with pointers of strings
+@param[in]  n_lines   Number of lines
+@param[in]  out       File to write in it
 */
-void putLineAlph(ptrs_t* put_ptr, const size_t nlines);
-
-/*!
-Prints sorted strings in the  in rhyme order
-
-@param[in]  *put_ptr The address of the massive of sorted structs with pointers of strings
-@param[inn  nlines   Number of lines
-*/
-void putLineRyhm(ptrs_t* put_ptr, const size_t nlines);
+void put_line(Ptrs_t* put_ptr, const size_t n_lines, FILE* out);
 
 /*!
 Prints the massive of the strings in the file
-
 @param[in]  *line   Massive of strings
-@param[in]  SiZe    The length of the massive of strings
+@param[in]  sz      The length of the massive of strings
+@param[in]  out     File to write in it
 */
-void putThePrimaryLine(char* line, size_t sz);
+void put_the_primary_line(char* line, size_t sz, FILE* out);
 
 ///Unit-tests for comparing from the beginnig
-void unit_tests_for_compstrAlph();
+void unit_tests_for_comp_str_in_alph();
 
 ///Unit-tests for comparing from the ending
-void unit_tests_for_compStrRyhm();
+void unit_tests_for_comp_str_in_ryhm();
 
 ///Unit-tests for sorting
-void unit_tests_for_sortlines();
+void unit_tests_for_sort_lines();
 
 int main(int argc, const char* argv[])
 {
@@ -146,153 +142,193 @@ int main(int argc, const char* argv[])
     We want to test comparing functions and the function of sorting
 */
     #ifdef TESTING
-        unit_tests_for_compStrInv();
-        unit_tests_for_compstr();
-        unit_tests_for_sortlines();
+        unitTestsForCompstrAlph();
+        unitTestsForCompstrRyhm();
+        unitTestsForSortlines();
 
         return 0;
     #else
-        FILE* poem;
+        FILE* input = NULL;
 
         if (argc > 1)
         {
-            poem = fopen(argv[1], "rb");
-            if (poem == NULL)
-                return 0;
+            input = fopen(argv[1], "rb");
+            if (input == NULL)
+                return EXIT_FAILURE;
         }
         else
         {
             printf("Please, give a file for program!\n");
-            return 0;
+            return EXIT_FAILURE;
         }
 
-        long int Len = 0;
-        if (!fseek(poem, 0, SEEK_END))
-            Len = ftell(poem);
-        Len ++;
-        fseek(poem, 0, SEEK_SET);
+        size_t len   = get_size_of_file(input);
+        char *buffer = get_the_text(input, &len);
 
-        char* buffer = (char*) calloc(Len, sizeof(char));
+        long int n_lines = get_num_lines(buffer, len);
 
-        long int obj = fread(buffer, sizeof(char), Len, poem);
+        Ptrs_t *ptr_buf = (Ptrs_t*) calloc(n_lines + 1, sizeof(Ptrs_t));
 
-        assert(obj == Len - 1);
+        assert (get_lines(buffer, ptr_buf, len) == n_lines);
 
-        buffer[Len - 1] = '\0';
+        counting_sizes(ptr_buf, n_lines);
 
-        long int nlines = 0;
+        FILE* output = fopen("Sorted.txt", "wb+");
 
-        nlines = getNumLines(buffer);
+        sort_lines(ptr_buf, 0, n_lines - 1, comp_str_in_alph);
+        put_line(ptr_buf, n_lines - 1, output);
 
-        ptrs_t* ptr_buf = (ptrs*) calloc(nlines + 1, sizeof(ptrs));
+        sort_lines(ptr_buf, 0, n_lines - 1, comp_str_in_ryhm);
+        put_line(ptr_buf, n_lines - 1, output);
 
-        assert (getLines(buffer, ptr_buf) == nlines);
+        put_the_primary_line(buffer, len, output);
 
-        countingSizes(ptr_buf, nlines);
-
-        sortLines(ptr_buf, 0, nlines - 1, compStrAlph);
-        putLineAlph(ptr_buf, nlines - 1);
-
-        sortLines(ptr_buf, 0, nlines - 1, compStrRyhm);
-        putLineRyhm(ptr_buf, nlines - 1);
-
-        putThePrimaryLine(buffer, Len);
-
-        fclose(poem);
+        fclose(input);
+        fclose(output);
 
         free(buffer);
+        free(ptr_buf);
 
         return 0;
 
     #endif
 }
 
-long int getNumLines(char* buf)
+long int get_size_of_file(FILE* file)
 {
-    long int nlines = 0;
-    char c = EOF;
+    assert(file != NULL);
 
-    while (nlines < MAXLINES && c != '\0')
-    {
-        c = * buf;
-        if (c == '\n')
-        {
-            nlines++;
-            buf++;
-        }
-        else
-        {
-            buf++;
-        }
-    }
+    long int len = 0;
+    if (!fseek(file, 0, SEEK_END))
+        len = ftell(file);
+    len++;
+    fseek(file, 0, SEEK_SET);
 
-    return nlines;
+    return len;
 }
 
-long int getLines(char* buf, ptrs_t* ptr_mas)
+char *get_the_text(FILE* file, size_t* length)
 {
-    size_t nlines = 0;
-    char c = EOF;
+    assert(file != NULL && *length != 0);
+
+    char* buffer = (char*) calloc(*length, sizeof(char));
+    long int obj = fread(buffer, sizeof(char), *length, file);
+
+    assert((size_t)obj == *length - 1);
+
+    if (buffer[obj] != '\n')
+    {
+        (*length)++;
+        buffer[*length - 2] = '\n';
+    }
+
+    buffer[*length - 1] = '\0';
+
+    return buffer;
+}
+
+long int get_num_lines(char* buf, size_t length)
+{
+    assert(buf != NULL);
+
+    long int n_lines = 0;
+    char* ptr        = NULL;
+    size_t len_tmp   = 0;
+
+    do
+    {
+        ptr = strchr(buf, '\n');
+
+        if (ptr != NULL)
+        {
+            len_tmp += ptr - buf + 1;
+
+            if (len_tmp < length)
+                n_lines++;
+
+            buf = ptr + 1;
+        }
+
+    }while (ptr != NULL && len_tmp < length);
+
+    return n_lines;
+}
+
+long int get_lines(char* buf, Ptrs_t* ptr_mas, size_t length)
+{
+    assert(buf != NULL && ptr_mas != NULL);
+
+    size_t n_lines = 0;
+    char* ptr      = NULL;
+    size_t len_tmp = 0;
 
     (*ptr_mas).ptr = buf;
 
-    while (nlines < MAXLINES && c != '\0')
+    do
     {
-        c = *buf;
-        if (c == '\n')
-        {
-            nlines++;
-            ptr_mas++;
-            (*ptr_mas).ptr = ++buf;
-        }
-        else
-        {
-            buf++;
-        }
-    }
+        ptr = strchr(buf, '\n');
 
-    return nlines;
+        if (ptr != NULL)
+        {
+            len_tmp += ptr - buf;
+
+            if (len_tmp < length)
+            {
+                n_lines++;
+                ptr_mas++;
+                buf = ptr + 1;
+                (*ptr_mas).ptr = buf;
+            }
+        }
+
+    }while (ptr != NULL && len_tmp < length);
+
+    return n_lines;
 }
 
-void countingSizes(ptrs_t* ptr_mas, size_t nlines)
+void counting_sizes(Ptrs_t* ptr_mas, size_t n_lines)
 {
+    assert(ptr_mas != NULL && n_lines != 0);
+
     char *pt = NULL;
-    for (size_t i = 0; i <= nlines; i++)
+    for (size_t i = 0; i <= n_lines; i++)
     {
         pt = (ptr_mas[i]).ptr;
-        while(*(pt++) != '\n' && ptr_mas[i].Length < MAXSYMB)
-            (ptr_mas[i]).Length++;
+        while(*(pt++) != '\n' && ptr_mas[i].length < MAXSYMB)
+        {
+            (ptr_mas[i]).length++;
+        }
     }
 }
 
-int compStrAlph(ptrs_t line1, ptrs_t line2)
+int comp_str_in_alph(Ptrs_t line1, Ptrs_t line2)
 {
-    while(*line1.ptr == *line2.ptr && *line1.ptr != '\n' && *line2.ptr != '\n')
+    while(!(*line1.ptr - *line2.ptr) && *line1.ptr != '\n' && *line2.ptr != '\n')
     {
         line1.ptr++;
         line2.ptr++;
 
-        while (!isalnum(*line1.ptr) && *line1.ptr != '\n')
+        while (!isalpha(*line1.ptr) && *line1.ptr != '\n')
             line1.ptr++;
-        while (!isalnum(*line2.ptr) && *line2.ptr != '\n')
+        while (!isalpha(*line2.ptr) && *line2.ptr != '\n')
             line2.ptr++;
     }
 
-    if      (isalnum(*line1.ptr) && isalnum(*line2.ptr) && *line1.ptr > *line2.ptr)
+    if      (isalpha(*line1.ptr) && isalpha(*line2.ptr) && *line1.ptr > *line2.ptr)
         return  1;
-    else if (isalnum(*line1.ptr) && isalnum(*line2.ptr) && *line1.ptr < *line2.ptr)
+    else if (isalpha(*line1.ptr) && isalpha(*line2.ptr) && *line1.ptr < *line2.ptr)
         return -1;
     else
         return 0;
 }
 
-int compStrRyhm(ptrs_t line1, ptrs_t line2)
+int comp_str_in_ryhm(Ptrs_t line1, Ptrs_t line2)
 {
-    long int len1 = line1.Length;
-    long int len2 = line2.Length;
+    long int len1 = line1.length;
+    long int len2 = line2.length;
 
-    line1.ptr += line1.Length;
-    line2.ptr += line2.Length;
+    line1.ptr += line1.length;
+    line2.ptr += line2.length;
 
     while (!isalpha(*line1.ptr) && len1 != 0)
     {
@@ -337,356 +373,249 @@ int compStrRyhm(ptrs_t line1, ptrs_t line2)
         return 0;
 }
 
-void swapLines(ptrs_t* Str, size_t line1, size_t line2)
+void swap_lines(Ptrs_t* str, size_t line1, size_t line2)
 {
-    char *temp     = Str[line1].ptr;
-    Str[line1].ptr = Str[line2].ptr;
-    Str[line2].ptr = temp;
+    assert(str != NULL);
 
-    long int tempLen  = Str[line1].Length;
-    Str[line1].Length = Str[line2].Length;
-    Str[line2].Length = tempLen;
+    char *temp     = str[line1].ptr;
+    str[line1].ptr = str[line2].ptr;
+    str[line2].ptr = temp;
+
+    long int templen  = str[line1].length;
+    str[line1].length = str[line2].length;
+    str[line2].length = templen;
 }
 
-void sortLines(ptrs_t* line, size_t low, size_t up, int (* cmp)(ptrs_t line1, ptrs_t line2))
+void sort_lines(Ptrs_t* line, size_t low, size_t up, int (*cmp)(Ptrs_t line1, Ptrs_t line2))
 {
-    if (low >= up)
+    assert(line != NULL);
+
+    if ((long int)low - (long int)up >= 0)
         return;
 
     size_t last = low;
 
-    swapLines(line, low, (low + up)/2);
+    swap_lines(line, low, (low + up)/2);
 
     for (size_t i = low + 1; i <= up; i++)
     {
         if (cmp(line[low], line[i]) > 0)
         {
             last++;
-            swapLines(line, last, i);
+            swap_lines(line, last, i);
         }
     }
-    swapLines(line, low, last);
+    swap_lines(line, low, last);
 
-    sortLines(line, low, last - 1, cmp);
-    sortLines(line, last + 1, up, cmp);
+    sort_lines(line, low, last - 1, cmp);
+    sort_lines(line, last + 1, up, cmp);
 }
 
-void putLineAlph(ptrs_t* put_ptr, const size_t nlines)
+void put_line(Ptrs_t* put_ptr, const size_t n_lines, FILE* out)
 {
-    FILE* dictionary = fopen("Sorted.txt", "wb");
+    assert(put_ptr != NULL);
 
-    for (size_t i = 0; i <= nlines; i++)
+    for (size_t i = 0; i <= n_lines; i++)
     {
         char* pt = put_ptr[i].ptr;
 
         while(*pt != '\n')
         {
-            fputc(*pt, dictionary);
+            fputc(*pt, out);
             pt++;
         }
-
-        fputc(*pt, dictionary);
+        fputc(*pt, out);
     }
-
-    fclose(dictionary);
+    fputc('\n', out);
 }
 
-void putLineRyhm(ptrs_t* put_ptr, const size_t nlines)
+void put_the_primary_line(char* line, size_t sz, FILE* out)
 {
-    FILE* other = fopen("SortedinRhyme.txt", "wb");
+    assert(line != NULL);
 
-    for (size_t i = 0; i <= nlines; i++)
-    {
-        char* pt = put_ptr[i].ptr;
-
-        while(*pt != '\n')
-        {
-            fputc(*pt, other);
-            pt++;
-        }
-        fputc(*pt, other);
-    }
-
-    fclose(other);
+    fwrite(line, sizeof(char), sz, out);
 }
 
-void putThePrimaryLine(char* line, size_t sz)
-{
-    FILE* directory = fopen("Text.txt", "wb");
-
-    fwrite(line, sizeof(char), sz, directory);
-
-    fclose(directory);
-}
-
-void unit_tests_for_compstrAlph()
+void unit_tests_for_comp_str_in_alph()
 {
     {
         char str1[] = "";
         char str2[] = "";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 1;
+        Ptrs string1 = {str1, 1};
+        Ptrs string2 = {str2, 1};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 1;
-
-        assert(compStrAlph(string1, string2) == 0);
+        assert(comp_str_in_alph(string1, string2) == 0);
     }
 
     {
         char str1[] = "        ";
         char str2[] = "";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 9;
+        Ptrs string1 = {str1, 9};
+        Ptrs string2 = {str2, 1};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 1;
-
-        assert(compStrAlph(string1, string2) == 0);
+        assert(comp_str_in_alph(string1, string2) == 0);
     }
 
     {
         char str1[] = " ";
         char str2[] = "  ";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 2;
+        Ptrs string1 = {str1, 2};
+        Ptrs string2 = {str2, 3};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 3;
-
-        assert(compStrAlph(string1, string2) == 0);
+        assert(comp_str_in_alph(string1, string2) == 0);
     }
 
     {
         char str1[] = ",";
         char str2[] = " ";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 2;
+        Ptrs string1 = {str1, 2};
+        Ptrs string2 = {str2, 2};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 2;
-
-        assert(compStrAlph(string1, string2) == 0);
+        assert(comp_str_in_alph(string1, string2) == 0);
     }
 
     {
         char str1[] = "Meow\n";
         char str2[] = "M     eow\n";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 6;
+        Ptrs string1 = {str1, 6};
+        Ptrs string2 = {str2, 11};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 11;
-
-        assert(compStrAlph(string1, string2) == 0);
+        assert(comp_str_in_alph(string1, string2) == 0);
     }
 
     {
         char str1[] = "Hero\n";
         char str2[] = "Herb\n";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 6;
+        Ptrs string1 = {str1, 6};
+        Ptrs string2 = {str2, 6};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 6;
-
-        assert(compStrAlph(string1, string2) > 0);
+        assert(comp_str_in_alph(string1, string2) > 0);
     }
 
     {
         char str1[] = "Hello, world\n";
         char str2[] = "Hello, my world\n";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 14;
+        Ptrs string1 = {str1, 14};
+        Ptrs string2 = {str2, 17};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 17;
-
-        assert(compStrAlph(string1, string2) > 0);
+        assert(comp_str_in_alph(string1, string2) > 0);
     }
 
     {
         char str1[] = "My name is Anna\n";
         char str2[] = "My name is not Anna\n";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 17;
+        Ptrs string1 = {str1, 17};
+        Ptrs string2 = {str2, 21};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 21;
-
-        assert(compStrAlph(string1, string2) < 0);
+        assert(comp_str_in_alph(string1, string2) < 0);
     }
 }
 
-void unit_tests_for_compStrRyhm()
+void unit_tests_for_comp_str_in_ryhm()
 {
     {
         char str1[] = "";
         char str2[] = "";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 1;
+        Ptrs string1 = {str1, 1};
+        Ptrs string2 = {str2, 1};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 1;
-
-        assert(compStrRyhm(string1, string2) == 0);
+        assert(comp_str_in_ryhm(string1, string2) == 0);
     }
 
     {
         char str1[] = "        ";
         char str2[] = "";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 9;
+        Ptrs string1 = {str1, 9};
+        Ptrs string2 = {str2, 1};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 1;
-
-        assert(compStrRyhm(string1, string2) == 0);
+        assert(comp_str_in_ryhm(string1, string2) == 0);
     }
 
     {
         char str1[] = " ";
         char str2[] = "  ";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 2;
+        Ptrs string1 = {str1, 2};
+        Ptrs string2 = {str2, 3};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 3;
-
-        assert(compStrRyhm(string1, string2) == 0);
+        assert(comp_str_in_ryhm(string1, string2) == 0);
     }
 
     {
         char str1[] = ",";
         char str2[] = " ";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 2;
+        Ptrs string1 = {str1, 2};
+        Ptrs string2 = {str2, 2};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 2;
-
-        assert(compStrRyhm(string1, string2) == 0);
+        assert(comp_str_in_ryhm(string1, string2) == 0);
     }
 
     {
         char str1[] = "Meow\n";
         char str2[] = "M     eow\n";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 6;
+        Ptrs string1 = {str1, 6};
+        Ptrs string2 = {str2, 11};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 11;
-
-        assert(compStrRyhm(string1, string2) == 0);
+        assert(comp_str_in_ryhm(string1, string2) == 0);
     }
 
     {
         char str1[] = "Hero\n";
         char str2[] = "Herb\n";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 6;
+        Ptrs string1 = {str1, 6};
+        Ptrs string2 = {str2, 6};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 6;
-
-        assert(compStrRyhm(string1, string2) > 0);
+        assert(comp_str_in_ryhm(string1, string2) > 0);
     }
 
     {
         char str1[] = "Hello, world\n";
         char str2[] = "Hello, my world\n";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 14;
+        Ptrs string1 = {str1, 14};
+        Ptrs string2 = {str2, 17};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 17;
-
-        assert(compStrRyhm(string1, string2) < 0);
+        assert(comp_str_in_ryhm(string1, string2) < 0);
     }
 
     {
         char str1[] = "My name is Anna\n";
         char str2[] = "My name is not Anna\n";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 17;
+        Ptrs string1 = {str1, 17};
+        Ptrs string2 = {str2, 21};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 21;
-
-        assert(compStrRyhm(string1, string2) < 0);
+        assert(comp_str_in_ryhm(string1, string2) < 0);
     }
 }
 
-void unit_tests_for_sortlines()
+void unit_tests_for_sort_lines()
 {
     {
         char str1[] = "ccc";
         char str2[] = "aaa";
         char str3[] = "bbb";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 4;
+        Ptrs string1 = {str1, 4};
+        Ptrs string2 = {str2, 4};
+        Ptrs string3 = {str3, 4};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 4;
+        Ptrs ptr[3] = {string1, string2, string3};
 
-        ptrs string3;
-        string1.ptr = str3;
-        string1.Length = 4;
-
-        ptrs ptr[3] = {string1, string2, string3};
-
-        sortLines(ptr, 0, 2, compStrAlph);
+        sort_lines(ptr, 0, 2, comp_str_in_alph);
         assert(ptr[0].ptr == string2.ptr);
     }
 
@@ -695,21 +624,13 @@ void unit_tests_for_sortlines()
         char str2[] = "ccc";
         char str3[] = "ccc";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 6;
+        Ptrs string1 = {str1, 6};
+        Ptrs string2 = {str2, 4};
+        Ptrs string3 = {str3, 4};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 4;
+        Ptrs ptr[3] = {string1, string2, string3};
 
-        ptrs string3;
-        string1.ptr = str3;
-        string1.Length = 4;
-
-        ptrs ptr[3] = {string1, string2, string3};
-
-        sortLines(ptr, 0, 2, compStrAlph);
+        sort_lines(ptr, 0, 2, comp_str_in_alph);
         assert((ptr[0].ptr == string3.ptr || ptr[0].ptr == string2.ptr) && ptr[2].ptr == string1.ptr);
     }
 
@@ -719,25 +640,14 @@ void unit_tests_for_sortlines()
         char str3[] = "oh, my god";
         char str4[] = "oh, my gosh";
 
-        ptrs string1;
-        string1.ptr = str1;
-        string1.Length = 5;
+        Ptrs string1 = {str1, 5 };
+        Ptrs string2 = {str2, 10};
+        Ptrs string3 = {str3, 11};
+        Ptrs string4 = {str4, 12};
 
-        ptrs string2;
-        string1.ptr = str2;
-        string1.Length = 10;
+        Ptrs ptr[4] = {string1, string2, string3, string4};
 
-        ptrs string3;
-        string1.ptr = str3;
-        string1.Length = 11;
-
-        ptrs string4;
-        string1.ptr = str4;
-        string1.Length = 12;
-
-        ptrs ptr[4] = {string1, string2, string3, string4};
-
-        sortLines(ptr, 0, 3, compStrAlph);
+        sort_lines(ptr, 0, 3, comp_str_in_alph);
         assert(ptr[0].ptr == string1.ptr && ptr[3].ptr == string4.ptr);
     }
 }
