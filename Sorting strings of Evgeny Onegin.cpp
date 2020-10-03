@@ -1,14 +1,14 @@
 /**
     \file
-    Sortings of Shakspeare
+    Sortings of Shakspeare.\n
     This program reads the text and sorts it alphabetically
-    from the beginnings and the endings of its lines
-    Prints alphabet sorting in the file "Sorted.txt"
-    Prints rhyme sorting in the file "SortedinRhyme.txt"
-    Prints the primary text in the file "Text.txt"
+    from the beginnings and the endings of its lines.\n
+    Prints alphabet sorting, rhyme sorting
+    and the primary text in the file "Sorted.txt"
+
     Thank you for using this program!
     \authors Anna Savchuk
-    \date    Last update was 09.29.20 at 00:18
+    \date    Last update was 10.03.20 at 15:12
 */
 
 #include <stdio.h>
