@@ -8,7 +8,7 @@
 
     Thank you for using this program!
     \authors Anna Savchuk
-    \date    Last update was 10.03.20 at 15:12
+    \date    Last update was 10.04.20 at 11:57
 */
 
 #include <stdio.h>
@@ -23,8 +23,8 @@
 
 struct Ptrs
 {
-    char     *ptr ;
-    long int length;
+    char  *ptr ;
+    size_t length;
 };
 
 typedef struct Ptrs Ptrs_t;
@@ -154,7 +154,10 @@ int main(int argc, const char* argv[])
         {
             input = fopen(argv[1], "rb");
             if (input == NULL)
+            {
+                perror("");
                 return EXIT_FAILURE;
+            }
         }
         else
         {
@@ -414,17 +417,17 @@ void sort_lines(Ptrs_t* line, size_t low, size_t up, int (*cmp)(Ptrs_t line1, Pt
 void put_line(Ptrs_t* put_ptr, const size_t n_lines, FILE* out)
 {
     assert(put_ptr != NULL);
+    assert(out     != NULL);
+
+    char* pt = NULL;
+    size_t l = 0;
 
     for (size_t i = 0; i <= n_lines; i++)
     {
-        char* pt = put_ptr[i].ptr;
+        pt = put_ptr[i].ptr;
+        l  = put_ptr[i].length + 1;
 
-        while(*pt != '\n')
-        {
-            fputc(*pt, out);
-            pt++;
-        }
-        fputc(*pt, out);
+        fwrite(pt, sizeof(char), l, out);
     }
     fputc('\n', out);
 }
