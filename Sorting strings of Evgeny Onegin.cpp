@@ -8,7 +8,7 @@
 
     Thank you for using this program!
     \authors Anna Savchuk
-    \date    Last update was 10.04.20 at 11:57
+    \date    Last update was 10.09.20 at 02:02
 */
 
 #include <stdio.h>
@@ -19,7 +19,7 @@
 
 //#define TESTING
 
-#define MAXSYMB 1000
+const int MAXSYMB = 1000;
 
 struct Ptrs
 {
